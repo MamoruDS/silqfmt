@@ -42,6 +42,15 @@ fn capfn_terminator(_cap: &Captures) -> (String, Option<String>) {
     (String::from(";\n"), None)
 }
 
+fn capfn_add_suffix_space(cap: &Captures) -> (String, Option<String>) {
+    let mut capture: String = String::new();
+    match cap.get(1) {
+        Some(m) => capture = format!("{} ", m.as_str()),
+        _ => {}
+    }
+    (capture, None)
+}
+
 fn capfn_comment(cap: &Captures) -> (String, Option<String>) {
     let mut capture: String = String::new();
     for g in 1..cap.len() {
@@ -153,6 +162,13 @@ impl SilqPattern {
                 capfn_special,
             ),
         );
+        patterns.insert(
+            String::from("add_suffix_space"),
+            (
+                String::from(r"([,|:])"),
+                capfn_add_suffix_space,
+            ),
+        );
 
         SilqPattern {
             patterns: patterns,
@@ -219,10 +235,12 @@ pub fn code_fmt(code: &str) -> String {
     p.restore(&"keyword", &cache_keywords);
     p.restore(&"operator", &cache_operators);
     p.restore(&"terminator", &cache_terminators);
-    p.restore(&"comment", &cache_comments);
-
+    
     let cache_specials = p.cache(&"special");
+    let cache_add_suffix_spaces = p.cache(&"add_suffix_space");
+    p.restore(&"add_suffix_space", &cache_add_suffix_spaces);
     p.restore(&"special", &cache_specials);
+    p.restore(&"comment", &cache_comments);
 
     p.code
 }
