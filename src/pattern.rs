@@ -43,17 +43,17 @@ fn capfn_terminator(_cap: &Captures) -> (String, Option<String>) {
 }
 
 fn capfn_comment(cap: &Captures) -> (String, Option<String>) {
-    let mut text: String = String::new();
-    for g in 1..cap.len()  {
+    let mut capture: String = String::new();
+    for g in 1..cap.len() {
         match cap.get(g) {
             Some(m) => {
                 match g {
                     3 => {
-                        text.push_str(m.as_str());
-                        text.push('\n');
+                        capture.push_str(m.as_str());
+                        capture.push('\n');
                     }
                     _ => {
-                        text.push_str(m.as_str());
+                        capture.push_str(m.as_str());
                     }
                 }
                 break;
@@ -61,7 +61,49 @@ fn capfn_comment(cap: &Captures) -> (String, Option<String>) {
             _ => {}
         }
     }
-    (text, None)
+    (capture, None)
+}
+
+fn capfn_special(cap: &Captures) -> (String, Option<String>) {
+    let mut capture: String = String::new();
+    for g in 4..cap.len() {
+        match cap.get(g) {
+            Some(_) => {
+                match g {
+                    4 => {
+                        capture.push('𝔹');
+                    }
+                    5 => {
+                        capture.push('ℕ');
+                    }
+                    6 => {
+                        capture.push('ℤ');
+                    }
+                    7 => {
+                        capture.push('ℚ');
+                    }
+                    8 => {
+                        capture.push('ℝ');
+                    }
+                    10 => {
+                        capture.push('→');
+                    }
+                    // TODO: add xorb
+                    _ => {
+                        capture.push_str("");
+                    }
+                }
+                break;
+            }
+            _ => {}
+        }
+    }
+    let mark = format!(
+        "{}[#special]{}",
+        cap.get(2).map_or("", |m| m.as_str()),
+        cap.get(9).map_or("", |m| m.as_str())
+    );
+    (capture, Some(mark))
 }
 
 pub struct SilqPattern {
@@ -100,8 +142,15 @@ impl SilqPattern {
         patterns.insert(
             String::from("operator"),
             (
-                String::from(r"(:=|==|=|>|<|>=|<=|!=|\|\||\&\&|\+|\-|\*|/)"),
+                String::from(r"(=>|->|:=|==|=|>|<|>=|<=|!=|\|\||\&\&|\+|\-|\*|/)"),
                 capfn_operator,
+            ),
+        );
+        patterns.insert(
+            String::from("special"),
+            (
+                String::from(r"(([^\w|_])((B)|(N)|(Z)|(Q)|(R))([^\w|_]))|(->)"),
+                capfn_special,
             ),
         );
 
@@ -160,7 +209,7 @@ pub fn code_fmt(code: &str) -> String {
     let mut p = SilqPattern::new();
     p.load(&code);
     p.remove(&"whitespace_safe");
-    // p.remove(&"comment");
+
     let cache_comments = p.cache(&"comment");
     let cache_keywords = p.cache(&"keyword");
     let cache_operators = p.cache(&"operator");
@@ -171,6 +220,9 @@ pub fn code_fmt(code: &str) -> String {
     p.restore(&"operator", &cache_operators);
     p.restore(&"terminator", &cache_terminators);
     p.restore(&"comment", &cache_comments);
+
+    let cache_specials = p.cache(&"special");
+    p.restore(&"special", &cache_specials);
 
     p.code
 }
