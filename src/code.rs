@@ -5,16 +5,20 @@ pub struct Code {
     code: String,
     lines: Vec<String>,
     depths: Vec<usize>,
+    tab_size: u8,
+    hardtab: bool,
     _depth: usize,
 }
 
 impl Code {
-    pub fn new(code: String) -> Code {
+    pub fn new(code: String, tab_size: u8, hardtab: bool) -> Code {
         Code {
             raw: code,
             code: String::default(),
             lines: vec![String::new()],
             depths: vec![0],
+            tab_size: tab_size,
+            hardtab: hardtab,
             _depth: 0,
         }
     }
@@ -56,11 +60,7 @@ impl Code {
 
     pub fn format(&mut self) -> String {
         let code = self.raw.clone();
-        for (i, c) in code.chars().enumerate() {
-            if i < 100 && i > 90 {
-                println!("read c: {}", c);
-                println!("curl l: {:?}", self.lines);
-            }
+        for (_, c) in code.chars().enumerate() {
             self.read(c);
         }
         self.code = String::new();
@@ -77,10 +77,22 @@ impl Code {
 
         match depth.cmp(&last_depth) {
             Ordering::Equal => {
+                match self.depths.get(i + 1) {
+                    Some(d) => match d.cmp(&depth) {
+                        Ordering::Less => {
+                            if content.len() == 0 {
+                                self.format_line(i + 1, depth);
+                                return;
+                            }
+                        }
+                        _ => {}
+                    },
+                    _ => {}
+                }
                 if self.code.len() != 0 {
                     self.code.push('\n');
                 }
-                self.code.push_str(&gen_indent(depth));
+                self.code.push_str(&self.gen_indent(depth));
                 self.code.push_str(content);
             }
             Ordering::Greater => {
@@ -92,7 +104,7 @@ impl Code {
                             let c = self.lines.get(i + 1).unwrap();
                             self.code.push('}');
                             self.code.push('\n');
-                            self.code.push_str(&gen_indent(*d));
+                            self.code.push_str(&self.gen_indent(*d));
                             self.code.push_str(match c.len() {
                                 0 => " ",
                                 _ => c,
@@ -105,28 +117,32 @@ impl Code {
                     _ => {}
                 }
                 self.code.push('\n');
-                self.code.push_str(&gen_indent(depth));
+                self.code.push_str(&self.gen_indent(depth));
                 self.code.push_str(content);
             }
             Ordering::Less => {
                 self.code.push('\n');
-                self.code.push_str(&gen_indent(depth));
+                self.code.push_str(&self.gen_indent(depth));
                 self.code.push('}');
                 self.code.push('\n');
-                self.code.push_str(&gen_indent(depth));
+                self.code.push_str(&self.gen_indent(depth));
                 self.code.push_str(content);
             }
         }
         self.format_line(i + 1, depth)
     }
-}
 
-fn gen_indent(depth: usize) -> String {
-    let mut indent: String = String::new();
-    for _ in 0..depth {
-        for _ in 0..4 {
-            indent.push(' ')
+    fn gen_indent(&self, depth: usize) -> String {
+        let mut indent: String = String::new();
+        for _ in 0..depth {
+            for _ in 0..self.tab_size {
+                if self.hardtab {
+                    indent.push('\t')
+                } else {
+                    indent.push(' ')
+                }
+            }
         }
+        indent
     }
-    indent
 }
