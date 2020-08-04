@@ -21,14 +21,14 @@ USAGE:
     silqfmt [FLAGS] [OPTIONS] --input <input-file>
 
 FLAGS:
+        --hardtab    Using hardtabs instead of spaces
     -h, --help       Prints help information
-        --space      Using spaces instead of tabs
     -V, --version    Prints version information
 
 OPTIONS:
     -i, --input <input-file>      Path of input file
     -o, --output <output-file>    Path of output file
-        --tab-size <tab-size>     TabSize [default: 4]
+        --tab-size <tab-size>     Size of indent [default: 4]
 ```
 
 ## License

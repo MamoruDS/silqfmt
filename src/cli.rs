@@ -18,7 +18,7 @@ pub fn run() -> (String, String, u8, bool) {
             Arg::with_name("tab-size")
                 .long("tab-size")
                 .value_name("tab-size")
-                .help("TabSize")
+                .help("Size of indent")
                 .required(false)
                 .default_value("4")
                 .takes_value(true),
@@ -33,9 +33,9 @@ pub fn run() -> (String, String, u8, bool) {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("space")
-                .long("space")
-                .help("Using spaces instead of tabs"),
+            Arg::with_name("hardtab")
+                .long("hardtab")
+                .help("Using hardtabs instead of spaces"),
         )
         .get_matches();
 
@@ -50,10 +50,10 @@ pub fn run() -> (String, String, u8, bool) {
     };
 
     let tab_size: u8 = matches.value_of("tab-size").unwrap().parse().unwrap();
-    
-    let space_indent: bool = match matches.occurrences_of("space") {
+
+    let hardtab: bool = match matches.occurrences_of("hardtab") {
         0 => false,
         _ => true,
     };
-    (input_path, output_path, tab_size, space_indent)
+    (input_path, output_path, tab_size, hardtab)
 }
