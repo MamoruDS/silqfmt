@@ -2,7 +2,7 @@ use clap::{App, Arg};
 
 pub fn run() -> (String, String, u8, bool) {
     let matches = App::new("silqfmt")
-        .version("0.1.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("MamoruDS <mamoruds.io@gmail.com>")
         .about("Formatter for Silq")
         .arg(
