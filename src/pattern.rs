@@ -57,6 +57,10 @@ fn capfn_comment(cap: &Captures) -> (String, Option<String>) {
         match cap.get(g) {
             Some(m) => {
                 match g {
+                    2 => {
+                        capture.push_str(m.as_str());
+                        capture.push('\n');
+                    }
                     3 => {
                         capture.push_str(m.as_str());
                         capture.push('\n');
@@ -230,15 +234,16 @@ pub fn code_fmt(code: &str) -> String {
     let cache_keywords = p.cache(&"keyword");
     let cache_operators = p.cache(&"operator");
     let cache_terminators = p.cache(&"terminator");
+    let cache_add_suffix_spaces = p.cache(&"add_suffix_space");
+    
     p.remove(&"whitespace_all");
 
     p.restore(&"keyword", &cache_keywords);
     p.restore(&"operator", &cache_operators);
     p.restore(&"terminator", &cache_terminators);
+    p.restore(&"add_suffix_space", &cache_add_suffix_spaces);
     
     let cache_specials = p.cache(&"special");
-    let cache_add_suffix_spaces = p.cache(&"add_suffix_space");
-    p.restore(&"add_suffix_space", &cache_add_suffix_spaces);
     p.restore(&"special", &cache_specials);
     p.restore(&"comment", &cache_comments);
 
