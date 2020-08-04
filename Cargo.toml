@@ -3,6 +3,10 @@ name = "silqfmt"
 version = "0.1.0"
 authors = ["MamoruDS <mamoruds.io@gmail.com>"]
 edition = "2018"
+description = "A simple formatter for Silq"
+repository = "https://github.com/MamoruDS/silqfmt"
+license = "MIT"
+readme = "README.md"
 
 [dependencies]
 regex = "1"
