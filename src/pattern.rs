@@ -155,7 +155,11 @@ impl SilqPattern {
         patterns.insert(
             String::from("operator"),
             (
-                String::from(r"(=>|->|:=|==|>=|<=|!=|<|>|=|\|\||\&\&|\+|\-|\*|/)"),
+                String::from(
+                    r"(=>|->|:=|==|>=|<=|!=|
+                    \+=|\*=|/=|%=|&=|\|=|^=|~=|<<=|>>=|>>>=|\^\^=|
+                    <|>|=|\|\||\&\&|\+|\-|\*|/)",
+                ),
                 capfn_operator,
             ),
         );
@@ -168,10 +172,7 @@ impl SilqPattern {
         );
         patterns.insert(
             String::from("add_suffix_space"),
-            (
-                String::from(r"([,|:])"),
-                capfn_add_suffix_space,
-            ),
+            (String::from(r"([,|:])"), capfn_add_suffix_space),
         );
 
         SilqPattern {
@@ -235,14 +236,12 @@ pub fn code_fmt(code: &str) -> String {
     let cache_operators = p.cache(&"operator");
     let cache_terminators = p.cache(&"terminator");
     let cache_add_suffix_spaces = p.cache(&"add_suffix_space");
-    
     p.remove(&"whitespace_all");
 
     p.restore(&"keyword", &cache_keywords);
     p.restore(&"operator", &cache_operators);
     p.restore(&"terminator", &cache_terminators);
     p.restore(&"add_suffix_space", &cache_add_suffix_spaces);
-    
     let cache_specials = p.cache(&"special");
     p.restore(&"special", &cache_specials);
     p.restore(&"comment", &cache_comments);
