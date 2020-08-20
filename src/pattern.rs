@@ -150,7 +150,7 @@ impl SilqPattern {
         );
         patterns.insert(
             String::from("keyword"),
-            (String::from(r"([^\w|_])((true|false|forget|λ|lambda|observe|cobserve|Π|Pi)|(dat|if|then|else|assert|repeat|in|quantum|lifted|qfree|mfree|as|coerce)|(const|def|for|import|return|while))([^\w|_])"), capfn_keyword),
+            (String::from(r"([^\w|_])((true|false|forget|λ|lambda|observe|cobserve|Π|Pi)|(dat|div|if|then|else\sif|else|assert|repeat|in|quantum|lifted|qfree|mfree|as|coerce)|(const|def|for|import|return|while))([^\w|_])"), capfn_keyword),
         );
         patterns.insert(
             String::from("operator"),
@@ -158,7 +158,7 @@ impl SilqPattern {
                 String::from(
                     r"(=>|->|:=|==|>=|<=|!=|
                     \+=|\*=|/=|%=|&=|\|=|^=|~=|<<=|>>=|>>>=|\^\^=|
-                    <|>|=|\|\||\&\&|\+|\-|\*|/)",
+                    <|>|=|\|\||\&\&|\+|\-|\*|·|/)",
                 ),
                 capfn_operator,
             ),
