@@ -155,7 +155,7 @@ impl SilqPattern {
         patterns.insert(
             String::from("operator"),
             (
-                String::from(r"(=>|->|:=|==|=|>|<|>=|<=|!=|\|\||\&\&|\+|\-|\*|/)"),
+                String::from(r"(=>|->|:=|==|>=|<=|!=|<|>|=|\|\||\&\&|\+|\-|\*|/)"),
                 capfn_operator,
             ),
         );
