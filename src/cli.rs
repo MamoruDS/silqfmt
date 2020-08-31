@@ -1,6 +1,6 @@
 use clap::{App, Arg};
 
-pub fn run() -> (String, String, u8, bool) {
+pub fn run() -> (String, String, u8, bool, bool) {
     let matches = App::new("silqfmt")
         .version(env!("CARGO_PKG_VERSION"))
         .author("MamoruDS <mamoruds.io@gmail.com>")
@@ -37,6 +37,11 @@ pub fn run() -> (String, String, u8, bool) {
                 .long("hardtab")
                 .help("Using hardtabs instead of spaces"),
         )
+        .arg(
+            Arg::with_name("unicode")
+                .long("unicode")
+                .help("Using unicode symbols"),
+        )
         .get_matches();
 
     let input_path: String = match matches.value_of("input") {
@@ -55,5 +60,11 @@ pub fn run() -> (String, String, u8, bool) {
         0 => false,
         _ => true,
     };
-    (input_path, output_path, tab_size, hardtab)
+
+    let unicode_symbol: bool = match matches.occurrences_of("hardtab") {
+        0 => false,
+        _ => true,
+    };
+
+    (input_path, output_path, tab_size, hardtab, unicode_symbol)
 }
