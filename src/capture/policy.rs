@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fmt};
 
 #[derive(Debug)]
-struct Policy<'t> {
+pub struct Policy<'t> {
     prefix: Option<&'t str>,
     prefix_round_overwrite: Option<&'t str>,
     prefix_curly_overwrite: Option<&'t str>,
@@ -56,5 +56,9 @@ impl<'t> FormatPolicy<'t> {
         });
 
         p
+    }
+
+    pub fn get(&self, policy: i8) -> &Policy<'t> {
+        self.policies.get(&policy).unwrap()
     }
 }
