@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::{collections::HashMap, fmt, ops::Range};
+use std::{cmp::Ord, collections::HashMap, fmt, ops::Range};
 
 struct RegexMatch {
     pub text: String,
@@ -83,6 +83,11 @@ impl PatternRec {
             panic!()
         }
 
+        self.sort();
         // println!("found: {} matches.\n{:?}", _found, self.matched);
+    }
+
+    pub fn sort(&mut self) {
+        self.matched.sort_by(|a, b| a.start.cmp(&b.start));
     }
 }
