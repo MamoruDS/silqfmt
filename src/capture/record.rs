@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::{cmp::Ord, collections::HashMap, fmt, ops::Range};
 
-struct RegexMatch {
+pub struct RegexMatch {
     pub text: String,
     pub start: usize,
     pub end: usize,
@@ -86,6 +86,10 @@ impl PatternRec {
     }
 
     pub fn sort(&mut self) {
-        self.matched.sort_by(|a, b| a.start.cmp(&b.start));
+        self.matched.sort_by(|a, b| b.start.cmp(&a.start));
+    }
+
+    pub fn matches_head(&mut self) -> Option<RegexMatch> {
+        self.matched.pop()
     }
 }
