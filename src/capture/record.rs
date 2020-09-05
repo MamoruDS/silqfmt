@@ -44,23 +44,24 @@ impl PatternRec {
 
     pub fn find(&mut self, re: &str, group_range: Range<usize>, group_policy: HashMap<i8, i8>) {
         let re = Regex::new(re).unwrap();
-        let mut cap_len = 0;
-        let mat_len: usize;
-
-        let mats: Vec<(usize, usize)> = re
-            .find_iter(&self.code[..])
-            .map(|m| (m.start(), m.end()))
-            .collect();
-
-        mat_len = mats.len();
-
         let mut _found = 0;
         for cap in re.captures_iter(&self.code[..]) {
-            let (start, end) = mats.get(cap_len).unwrap();
-            cap_len += 1;
-            if self.is_matched(*start, *end) {
+            let text: &str;
+            let start: usize;
+            let end: usize;
+            match &cap.name("body") {
+                Some(mat) => {
+                    start = mat.start();
+                    end = mat.end();
+                    text = mat.as_str();
+                }
+                None => continue,
+            };
+
+            if self.is_matched(start, end) {
                 continue;
             }
+
             let mut group_num: i8 = 0;
             for g in group_range.start..group_range.end {
                 match cap.get(g) {
@@ -70,17 +71,14 @@ impl PatternRec {
                     _ => {}
                 }
             }
+
             self.matched.push(RegexMatch {
-                text: String::from(&cap["body"]),
-                start: *start,
-                end: *end,
+                text: String::from(text),
+                start: start,
+                end: end,
                 policy: *group_policy.get(&group_num).unwrap(),
             });
             _found += 1;
-        }
-
-        if mat_len != cap_len {
-            panic!()
         }
 
         self.sort();
